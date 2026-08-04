@@ -1,6 +1,7 @@
 import React from 'react';
 import { Stack } from 'expo-router';
-import { SafeAreaView, KeyboardAvoidingView, Platform, View, Text, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
+import { KeyboardAvoidingView, Platform, View, Text, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Plus, Sparkles, LogOut } from 'lucide-react-native';
 import { AppProvider, useApp } from '../src/context/AppContext';
 import { styles } from '../src/constants/theme';
@@ -29,7 +30,11 @@ const RootLayout = () => {
         <Stack 
           screenOptions={{ 
             headerShown: false,
-            contentStyle: { backgroundColor: '#FAF9F5' }
+            contentStyle: { 
+              backgroundColor: '#FAF9F5',
+              paddingHorizontal: 24,
+              paddingVertical: 16
+            }
           }} 
         />
 
@@ -87,8 +92,10 @@ const RootLayout = () => {
 
 export default function Layout() {
   return (
-    <AppProvider>
-      <RootLayout />
-    </AppProvider>
+    <SafeAreaProvider>
+      <AppProvider>
+        <RootLayout />
+      </AppProvider>
+    </SafeAreaProvider>
   );
 }
