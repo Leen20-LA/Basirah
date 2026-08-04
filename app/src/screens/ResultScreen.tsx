@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { HeartHandshake, Lightbulb, CheckCircle2, Check, HelpCircle, Bookmark, Copy, Plus } from 'lucide-react-native';
 import { useApp } from '../context/AppContext';
 import { styles } from '../constants/theme';
@@ -20,7 +20,10 @@ const ResultScreen = () => {
   if (!analysisResult) return null;
 
   return (
-    <View style={styles.resultContainer}>
+    <ScrollView 
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.resultContainer}
+    >
       <View style={styles.resultSnippet}>
         <Text style={styles.snippetLabel}>نص تفريغك الذهني:</Text>
         <Text style={styles.snippetText} numberOfLines={4}>"{inputText}"</Text>
@@ -100,7 +103,7 @@ const ResultScreen = () => {
           <Plus color="#5A5A56" size={16} style={{ marginLeft: 6 }} />
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
