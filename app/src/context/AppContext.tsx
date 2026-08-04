@@ -1,0 +1,279 @@
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useRouter, usePathname, Href } from 'expo-router';
+import * as Clipboard from 'expo-clipboard';
+import { analyzeText } from '../services/ai/aiService';
+import { Session, AnalysisResult } from '../types';
+
+interface AppContextType {
+  view: string;
+  setView: (view: string) => void;
+  goBack: () => void;
+  previousView: string;
+  setPreviousView: (view: string) => void;
+  onboardingStep: number;
+  setOnboardingStep: (step: number) => void;
+  loginEmail: string;
+  setLoginEmail: (email: string) => void;
+  sidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+  inputText: string;
+  setInputText: (text: string) => void;
+  isAnalyzing: boolean;
+  analysisResult: AnalysisResult | null;
+  setAnalysisResult: (result: AnalysisResult | null) => void;
+  completedSteps: { [key: number]: boolean };
+  setCompletedSteps: (steps: { [key: number]: boolean }) => void;
+  isRecording: boolean;
+  toggleRecording: () => void;
+  copied: boolean;
+  isBookmarked: boolean;
+  setIsBookmarked: (bookmarked: boolean) => void;
+  showBreathingModal: boolean;
+  setShowBreathingModal: (show: boolean) => void;
+  breathPhase: string;
+  setBreathPhase: (phase: string) => void;
+  breathTimer: number;
+  setBreathTimer: (timer: number) => void;
+  language: string;
+  setLanguage: (lang: string) => void;
+  showLanguageModal: boolean;
+  setShowLanguageModal: (show: boolean) => void;
+  showLogoutModal: boolean;
+  setShowLogoutModal: (show: boolean) => void;
+  contactSubmitted: boolean;
+  setContactSubmitted: (submitted: boolean) => void;
+  openFaq: number | null;
+  setOpenFaq: (faq: number | null) => void;
+  sessions: Session[];
+  currentSessionId: string | null;
+  handleAnalyze: () => Promise<void>;
+  handleNewSession: () => void;
+  loadSession: (session: Session) => void;
+  deleteSession: (id: string) => void;
+  copyToClipboard: () => Promise<void>;
+}
+
+const AppContext = createContext<AppContextType | undefined>(undefined);
+
+export const AppProvider = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  
+  // Derive view from pathname, defaulting to onboarding for the root
+  const currentView = pathname.substring(1) || 'onboarding';
+  
+  const setView = (newView: string) => {
+    router.push(`/${newView}` as Href);
+  };
+
+  const goBack = () => {
+    router.back();
+  };
+
+  // These are kept as no-ops to avoid breaking existing calls in components 
+  // that we aren't modifying, as Expo Router handles the back stack automatically.
+  const [previousView, setPreviousView] = useState('editor');
+
+  const [onboardingStep, setOnboardingStep] = useState(0);
+  const [loginEmail, setLoginEmail] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [inputText, setInputText] = useState('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+  const [completedSteps, setCompletedSteps] = useState<{ [key: number]: boolean }>({});
+  const [isRecording, setIsRecording] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [showBreathingModal, setShowBreathingModal] = useState(false);
+  const [breathPhase, setBreathPhase] = useState('شهيق');
+  const [breathTimer, setBreathTimer] = useState(4);
+  const [language, setLanguage] = useState('العربية');
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [contactSubmitted, setContactSubmitted] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [sessions, setSessions] = useState<Session[]>([
+    {
+      id: 'demo-1',
+      date: 'اليوم، 10:30 صباحاً',
+      preview: 'أشعر بضغط كبير بسبب تراكم المهام في العمل ولا أعرف من أين أبدأ...',
+      inputText: 'أشعر بضغط كبير بسبب تراكم المهام في العمل ولا أعرف من أين أبدأ. لدي عرض تقديمي يوم الخميس ولم أبدأ بعد، وهناك إيميلات كثيرة معلقة. أشعر أنني تائه بين التخطيط والتنفيذ.',
+      result: {
+        empathyMessage: 'طبيعي جداً أن تشعر بالحيرة عندما تتزاحم المهام أمامك في وقت واحد. البداية دائماً هي الجزء الأثقل، لكنك الآن خطوت الخطوة الأولى بكتابتها.',
+        coreIdeas: [
+          'القلق الأساسي ينبع من العرض التقديمي القادم يوم الخميس.',
+          'الرسائل المعلقة تسبب تشتتاً ذهنياً مستمراً.',
+          'الشعور بالضياع ناتج عن محاولة التفكير في كل شيء معاً.'
+        ],
+        actionSteps: [
+          'حدد 15 دقيقة فقط الآن لوضع الهيكل العام للعرض التقديمي دون الاهتمام بالتفاصيل.',
+          'أغلق صندوق البريد لمدة ساعة لتستعيد تركيزك الهادئ.'
+        ],
+        reflectiveQuestion: 'ما هي النتيجة الوحيدة التي إن تحققت اليوم ستجعلك تشعر بالرضا والاطمئنان؟'
+      }
+    }
+  ]);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+
+  useEffect(() => {
+    let interval: any = null;
+    if (showBreathingModal) {
+      interval = setInterval(() => {
+        setBreathTimer((prev) => {
+          if (prev <= 1) {
+            if (breathPhase === 'شهيق') {
+              setBreathPhase('حبس');
+              return 7;
+            } else if (breathPhase === 'حبس') {
+              setBreathPhase('زفير');
+              return 8;
+            } else {
+              setBreathPhase('شهيق');
+              return 4;
+            }
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      setBreathPhase('شهيق');
+      setBreathTimer(4);
+    }
+    return () => clearInterval(interval);
+  }, [showBreathingModal, breathPhase]);
+
+  const toggleRecording = () => {
+    setIsRecording(!isRecording);
+  };
+
+  const handleAnalyze = async () => {
+    if (!inputText.trim() || isAnalyzing) return;
+    setIsRecording(false);
+    setIsAnalyzing(true);
+    try {
+      const result = await analyzeText(inputText);
+      setAnalysisResult(result);
+      setCompletedSteps({});
+      setIsBookmarked(false);
+
+      const newSession: Session = {
+        id: Date.now().toString(),
+        date: new Date().toLocaleDateString('ar-SA', { weekday: 'long', hour: '2-digit', minute: '2-digit' }),
+        preview: inputText.slice(0, 60) + (inputText.length > 60 ? '...' : ''),
+        inputText: inputText,
+        result: result
+      };
+
+      setSessions([newSession, ...sessions]);
+      setCurrentSessionId(newSession.id);
+      setView('result');
+    } catch (error) {
+      const fallbackResult: AnalysisResult = {
+        empathyMessage: 'يبدو أن الأفكار متداخلة قليلاً، ولكن مجرد إخراجها على الورق هو خطوة شجاعة نحو الهدوء والسكينة.',
+        coreIdeas: ['رغبة في التنظيم والتخلص من الشعور بالتشتت الذهني.', 'البحث عن مساحة آمنة لاستعادة التوازن والوضوح.'],
+        actionSteps: ['خذ نفساً عميقاً ولا تستعجل إنهاء كل شيء في هذه اللحظة.', 'ركز على أمر واحد بسيط جداً تستطيع إنجازه في الدقائق القادمة.'],
+        reflectiveQuestion: 'ما الذي تحتاجه ذهنياً وجسدياً في هذه اللحظة بالذات للاندماج بهدوء؟'
+      };
+      setAnalysisResult(fallbackResult);
+      setView('result');
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const handleNewSession = () => {
+    setInputText('');
+    setAnalysisResult(null);
+    setCurrentSessionId(null);
+    setCompletedSteps({});
+    setIsBookmarked(false);
+    setView('editor');
+    setSidebarOpen(false);
+  };
+
+  const loadSession = (session: Session) => {
+    setInputText(session.inputText);
+    setAnalysisResult(session.result);
+    setCurrentSessionId(session.id);
+    setCompletedSteps({});
+    setIsBookmarked(false);
+    setView('result');
+    setSidebarOpen(false);
+  };
+
+  const deleteSession = (id: string) => {
+    setSessions(sessions.filter(s => s.id !== id));
+    if (currentSessionId === id) handleNewSession();
+  };
+
+  const copyToClipboard = async () => {
+    if (!analysisResult) return;
+    const formatted = `رؤية بصيرة:\n${analysisResult.empathyMessage}\n\nالنقاط جوهرية:\n${analysisResult.coreIdeas?.map((item: string, i: number) => `${i + 1}. ${item}`).join('\n')}\n\nخطوات عمل مقترحة:\n${analysisResult.actionSteps?.map((item: string, i: number) => `- ${item}`).join('\n')}\n\nتأمل هادئ:\n${analysisResult.reflectiveQuestion}`.trim();
+    await Clipboard.setStringAsync(formatted);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <AppContext.Provider
+      value={{
+        view: currentView,
+        setView,
+        goBack,
+        previousView,
+        setPreviousView,
+        onboardingStep,
+        setOnboardingStep,
+        loginEmail,
+        setLoginEmail,
+        sidebarOpen,
+        setSidebarOpen,
+        inputText,
+        setInputText,
+        isAnalyzing,
+        analysisResult,
+        setAnalysisResult,
+        completedSteps,
+        setCompletedSteps,
+        isRecording,
+        toggleRecording,
+        copied,
+        isBookmarked,
+        setIsBookmarked,
+        showBreathingModal,
+        setShowBreathingModal,
+        breathPhase,
+        setBreathPhase,
+        breathTimer,
+        setBreathTimer,
+        language,
+        setLanguage,
+        showLanguageModal,
+        setShowLanguageModal,
+        showLogoutModal,
+        setShowLogoutModal,
+        contactSubmitted,
+        setContactSubmitted,
+        openFaq,
+        setOpenFaq,
+        sessions,
+        currentSessionId,
+        handleAnalyze,
+        handleNewSession,
+        loadSession,
+        deleteSession,
+        copyToClipboard,
+      }}
+    >
+      {children}
+    </AppContext.Provider>
+  );
+};
+
+export const useApp = () => {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useApp must be used within an AppProvider');
+  }
+  return context;
+};
