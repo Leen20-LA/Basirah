@@ -25,6 +25,8 @@ interface AppContextType {
   setCompletedSteps: React.Dispatch<React.SetStateAction<{ [key: number]: boolean }>>;
   isRecording: boolean;
   toggleRecording: () => void;
+  showVoiceModal: boolean;
+  setShowVoiceModal: (show: boolean) => void;
   copied: boolean;
   isBookmarked: boolean;
   setIsBookmarked: React.Dispatch<React.SetStateAction<boolean>>;
@@ -82,6 +84,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [completedSteps, setCompletedSteps] = useState<{ [key: number]: boolean }>({});
   const [isRecording, setIsRecording] = useState(false);
+  const [showVoiceModal, setShowVoiceModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showBreathingModal, setShowBreathingModal] = useState(false);
@@ -143,7 +146,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   }, [showBreathingModal, breathPhase]);
 
   const toggleRecording = () => {
-    setIsRecording(!isRecording);
+    setShowVoiceModal(true);
   };
 
   const handleAnalyze = async () => {
@@ -237,6 +240,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         setCompletedSteps,
         isRecording,
         toggleRecording,
+        showVoiceModal,
+        setShowVoiceModal,
         copied,
         isBookmarked,
         setIsBookmarked,

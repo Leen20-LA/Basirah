@@ -17,7 +17,9 @@ const RootLayout = () => {
     handleAnalyze, 
     showLogoutModal, 
     setShowLogoutModal, 
-    setView 
+    setView,
+    showVoiceModal,
+    setShowVoiceModal
   } = useApp();
 
   return (
@@ -81,6 +83,23 @@ const RootLayout = () => {
                     <Text style={styles.secondaryBtnText}>إلغاء</Text>
                   </TouchableOpacity>
                 </View>
+              </View>
+            </View>
+          </Modal>
+        )}
+
+        {showVoiceModal && (
+          <Modal transparent animationType="fade" visible={showVoiceModal}>
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>🎤 الإدخال الصوتي</Text>
+                <Text style={[styles.modalSubTitle, { textAlign: 'center' }]}>هذه الميزة قيد التطوير وستكون متاحة في تحديث قريب.</Text>
+                <TouchableOpacity 
+                  style={styles.primaryBtn} 
+                  onPress={() => setShowVoiceModal(false)}
+                >
+                  <Text style={styles.primaryBtnText}>حسنًا</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </Modal>
