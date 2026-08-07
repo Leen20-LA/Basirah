@@ -72,7 +72,7 @@ const RootLayout = () => {
                 <View style={styles.rowCentered}>
                   <TouchableOpacity 
                     style={[styles.primaryBtn, { backgroundColor: '#C85A5A', flex: 1, marginLeft: 8 }]} 
-                    onPress={() => { setShowLogoutModal(false); setView('onboarding'); }}
+                    onPress={() => { setShowLogoutModal(false); setView('login'); }}
                   >
                     <Text style={styles.primaryBtnText}>تأكيد الخروج</Text>
                   </TouchableOpacity>
