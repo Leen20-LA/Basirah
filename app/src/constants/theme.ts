@@ -296,6 +296,20 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
   },
+  tertiaryBtnFull: {
+    width: '100%',
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#DCD8CC',
+    borderRadius: 16,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  tertiaryBtnFullText: {
+    color: '#3D3A35',
+    fontSize: 12,
+    fontWeight: '500',
+  },
   footerText: {
     fontSize: 11,
     color: '#A29C91',
