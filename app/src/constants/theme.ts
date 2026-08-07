@@ -366,9 +366,10 @@ export const styles = StyleSheet.create({
   },
   fabContainer: {
     position: 'absolute',
-    bottom: 24,
+    bottom: 29,
     width: '100%',
     alignItems: 'center',
+    transform: [{ translateX: 4 }],
   },
   fabBtn: {
     flexDirection: 'row',
@@ -387,6 +388,22 @@ export const styles = StyleSheet.create({
     color: '#F5F3EC',
     fontSize: 14,
     fontWeight: '500',
+  },
+  fabCircleBtn: {
+    position: 'absolute',
+    bottom: 39,
+    left: -6,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#3A3832',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
   // Result View
   resultContainer: {

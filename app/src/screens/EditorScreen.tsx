@@ -1,12 +1,22 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Keyboard, TouchableWithoutFeedback } from 'react-native';
-import { Mic, MicOff } from 'lucide-react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Keyboard, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
+import { Mic, MicOff, Sparkles } from 'lucide-react-native';
 import { useApp } from '../context/AppContext';
 import { styles } from '../constants/theme';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 
 const EditorScreen = () => {
-  const { inputText, setInputText, isRecording, toggleRecording } = useApp();
+  const { inputText, setInputText, isRecording, toggleRecording, handleAnalyze, isAnalyzing } = useApp();
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const showListener = Keyboard.addListener('keyboardDidShow', () => setIsKeyboardVisible(true));
+    const hideListener = Keyboard.addListener('keyboardDidHide', () => setIsKeyboardVisible(false));
+    return () => {
+      showListener.remove();
+      hideListener.remove();
+    };
+  }, []);
 
 return (
   <KeyboardAvoidingView
@@ -72,6 +82,20 @@ return (
             )}
           </View>
         </ScrollView>
+
+        {isKeyboardVisible && inputText.trim().length > 0 && (
+          <TouchableOpacity
+            style={styles.fabCircleBtn}
+            onPress={() => handleAnalyze()}
+            disabled={isAnalyzing}
+          >
+            {isAnalyzing ? (
+              <ActivityIndicator color="#FFF" size="small" />
+            ) : (
+              <Sparkles color="#D8D2C2" size={20} />
+            )}
+          </TouchableOpacity>
+        )}
       </View>
     </TouchableWithoutFeedback>
   </KeyboardAvoidingView>
