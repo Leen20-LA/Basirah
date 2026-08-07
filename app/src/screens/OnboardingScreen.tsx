@@ -10,9 +10,9 @@ const OnboardingScreen = () => {
   return (
     <View style={styles.onboardingContainer}>
       <View style={styles.onboardingHeader}>
-        {onboardingStep < 2 ? (
-          <TouchableOpacity onPress={() => setView('login')}>
-            <Text style={styles.skipText}>تخطي</Text>
+        {onboardingStep > 0 ? (
+          <TouchableOpacity onPress={() => setOnboardingStep(p => p - 1)}>
+            <Text style={styles.skipText}>رجوع</Text>
           </TouchableOpacity>
         ) : <View style={{ width: 40 }} />}
         <View style={styles.dotsContainer}>
@@ -20,6 +20,11 @@ const OnboardingScreen = () => {
             <View key={step} style={[styles.dot, onboardingStep === step ? styles.activeDot : null]} />
           ))}
         </View>
+        {onboardingStep < 2 ? (
+          <TouchableOpacity onPress={() => setView('login')}>
+            <Text style={styles.skipText}>تخطي</Text>
+          </TouchableOpacity>
+        ) : <View style={{ width: 40 }} />}
       </View>
 
       <View style={styles.onboardingCenter}>
