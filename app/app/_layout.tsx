@@ -25,7 +25,7 @@ const RootLayout = () => {
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.innerContainer}>
-        {view !== 'onboarding' && view !== 'login' && <Header />}
+        {view !== 'onboarding' && view !== 'login' && view !== 'signup' && <Header />}
         
         <Sidebar />
 

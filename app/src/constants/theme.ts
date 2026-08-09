@@ -314,6 +314,25 @@ export const styles = StyleSheet.create({
     fontSize: 11,
     color: '#A29C91',
   },
+  signupHeader: {
+    width: '100%',
+    maxWidth: 320,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  signupBackBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+  },
+  signupBackText: {
+    fontSize: 12,
+    color: '#3D3A35',
+    fontWeight: '500',
+    marginRight: 4,
+  },
   // Editor
   editorContainer: {
     flex: 1,
