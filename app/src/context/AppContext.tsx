@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { Alert } from 'react-native';
 import { useRouter, usePathname, Href } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import { analyzeText } from '../services/ai/aiService';
@@ -171,14 +172,14 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       setCurrentSessionId(newSession.id);
       setView('result');
     } catch (error) {
-      const fallbackResult: AnalysisResult = {
-        empathyMessage: 'يبدو أن الأفكار متداخلة قليلاً، ولكن مجرد إخراجها على الورق هو خطوة شجاعة نحو الهدوء والسكينة.',
-        coreIdeas: ['رغبة في التنظيم والتخلص من الشعور بالتشتت الذهني.', 'البحث عن مساحة آمنة لاستعادة التوازن والوضوح.'],
-        actionSteps: ['خذ نفساً عميقاً ولا تستعجل إنهاء كل شيء في هذه اللحظة.', 'ركز على أمر واحد بسيط جداً تستطيع إنجازه في الدقائق القادمة.'],
-        reflectiveQuestion: 'ما الذي تحتاجه ذهنياً وجسدياً في هذه اللحظة بالذات للاندماج بهدوء؟'
-      };
-      setAnalysisResult(fallbackResult);
-      setView('result');
+      // Log the technical error for development/debugging only.
+      console.error('AI analysis failed:', error);
+
+      // Show a simple, friendly user-facing error. Do NOT expose raw API/internal details.
+      Alert.alert(
+        'تعذر إجراء التحليل',
+        'حدثت مشكلة أثناء تحليل أفكارك. يرجى المحاولة مرة أخرى بعد قليل.'
+      );
     } finally {
       setIsAnalyzing(false);
     }
