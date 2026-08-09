@@ -1,6 +1,6 @@
 import React from 'react';
 import { Stack } from 'expo-router';
-import { KeyboardAvoidingView, Platform, View, Text, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Plus, Sparkles, LogOut } from 'lucide-react-native';
 import { AppProvider, useApp } from '../src/context/AppContext';
@@ -24,7 +24,7 @@ const RootLayout = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.innerContainer}>
+      <View style={styles.innerContainer}>
         {view !== 'onboarding' && view !== 'login' && view !== 'signup' && <Header />}
         
         <Sidebar />
@@ -104,7 +104,7 @@ const RootLayout = () => {
             </View>
           </Modal>
         )}
-      </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 };
