@@ -1,31 +1,63 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Keyboard, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
 import { Mic, MicOff, Sparkles } from 'lucide-react-native';
 import { useApp } from '../context/AppContext';
 import { styles } from '../constants/theme';
-import { KeyboardAvoidingView, Platform } from 'react-native';
 
 const EditorScreen = () => {
   const { inputText, setInputText, isRecording, toggleRecording, handleAnalyze, isAnalyzing } = useApp();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [keyboardPadding, setKeyboardPadding] = useState(0);
+  const layoutRef = useRef<View | null>(null);
 
-  useEffect(() => {
-    const showListener = Keyboard.addListener('keyboardDidShow', () => setIsKeyboardVisible(true));
-    const hideListener = Keyboard.addListener('keyboardDidHide', () => setIsKeyboardVisible(false));
-    return () => {
-      showListener.remove();
-      hideListener.remove();
-    };
+  const updateKeyboardPadding = useCallback((keyboardTopY: number | null) => {
+    const node = layoutRef.current;
+    if (!node) return;
+    node.measureInWindow((x, y, w, h) => {
+      const containerBottom = y + h;
+      setKeyboardPadding(
+        keyboardTopY == null ? 0 : Math.max(0, containerBottom - keyboardTopY)
+      );
+    });
   }, []);
 
+  useEffect(() => {
+    const willChangeListener = Keyboard.addListener('keyboardWillChangeFrame', (e) => {
+      updateKeyboardPadding(e.endCoordinates.screenY);
+    });
+    const willHideListener = Keyboard.addListener('keyboardWillHide', () => {
+      updateKeyboardPadding(null);
+    });
+
+    return () => {
+      willChangeListener.remove();
+      willHideListener.remove();
+    };
+  }, [updateKeyboardPadding]);
+
+  useEffect(() => {
+  const showListener = Keyboard.addListener('keyboardDidShow', () => {
+    setIsKeyboardVisible(true);
+  });
+
+  const hideListener = Keyboard.addListener('keyboardDidHide', () => {
+    setIsKeyboardVisible(false);
+  });
+
+  return () => {
+    showListener.remove();
+    hideListener.remove();
+  };
+}, []);
 return (
-  <KeyboardAvoidingView
-    style={{ flex: 1 }}
-    behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-  >
+  <View style={{ flex: 1 }}>
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={{ flex: 1 }}>
+      <View
+        ref={layoutRef}
+        style={{ flex: 1, paddingBottom: keyboardPadding }}
+      >
         <ScrollView
+          style={{ flex: 1 }}
           keyboardShouldPersistTaps="never"
           keyboardDismissMode="interactive"
           showsVerticalScrollIndicator={false}
@@ -65,24 +97,24 @@ return (
               textAlignVertical="top"
             />
 
-            {inputText.trim().length > 0 && (
-              <View style={styles.editorFooter}>
-                <Text style={styles.charCountText}>
-                  {inputText.trim().length} حرف
-                </Text>
-
-                <View style={styles.rowCentered}>
-                  <Text style={styles.listeningText}>
-                    بصيرة يستمع إليك بإصغاء تام...
-                  </Text>
-
-                  <View style={styles.listeningDot} />
-                </View>
-              </View>
-            )}
           </View>
         </ScrollView>
+        {inputText.trim().length > 0 && (
+          <View style={styles.editorFooter}>
+      
+      <Text style={styles.charCountText}>
+        {inputText.trim().length} حرف
+      </Text>
 
+      <View style={styles.rowCentered}>
+        <Text style={styles.listeningText}>
+          بصيرة يستمع إليك بإصغاء تام...
+        </Text>
+
+      <View style={styles.listeningDot} />
+      </View>
+    </View>
+    )}
         {isKeyboardVisible && inputText.trim().length > 0 && (
           <TouchableOpacity
             style={styles.fabCircleBtn}
@@ -98,7 +130,7 @@ return (
         )}
       </View>
     </TouchableWithoutFeedback>
-  </KeyboardAvoidingView>
+  </View>
 );
 };
 

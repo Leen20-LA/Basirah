@@ -385,7 +385,7 @@ export const styles = StyleSheet.create({
   },
   fabContainer: {
     position: 'absolute',
-    bottom: 29,
+    bottom: 70,
     width: '100%',
     alignItems: 'center',
     transform: [{ translateX: 4 }],
@@ -410,8 +410,8 @@ export const styles = StyleSheet.create({
   },
   fabCircleBtn: {
     position: 'absolute',
-    bottom: 39,
-    left: -6,
+    bottom: 300,
+    left: -4,
     width: 56,
     height: 56,
     borderRadius: 28,
