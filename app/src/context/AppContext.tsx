@@ -212,7 +212,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   const copyToClipboard = async () => {
     if (!analysisResult) return;
-    const formatted = `رؤية بصيرة:\n${analysisResult.empathyMessage}\n\nالنقاط جوهرية:\n${analysisResult.coreIdeas?.map((item: string, i: number) => `${i + 1}. ${item}`).join('\n')}\n\nخطوات عمل مقترحة:\n${analysisResult.actionSteps?.map((item: string, i: number) => `- ${item}`).join('\n')}\n\nتأمل هادئ:\n${analysisResult.reflectiveQuestion}`.trim();
+    const formatted = `رؤية بصيرة:\n${analysisResult.empathyMessage}\n\nالنقاط جوهرية:\n${(analysisResult.coreIdeas ?? []).map((item: string, i: number) => `${i + 1}. ${item}`).join('\n')}\n\nخطوات عمل مقترحة:\n${(analysisResult.actionSteps ?? []).map((item: string, i: number) => `- ${item}`).join('\n')}\n\nتأمل هادئ:\n${analysisResult.reflectiveQuestion}`.trim();
     await Clipboard.setStringAsync(formatted);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);

@@ -94,7 +94,7 @@ const ResultScreen = () => {
           <TouchableOpacity onPress={() => setIsBookmarked(!isBookmarked)} style={styles.actionBtn}>
             <Bookmark color={isBookmarked ? "#D29B52" : "#5A5A56"} size={20} fill={isBookmarked ? "#D29B52" : "transparent"} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={copyToClipboard} style={[styles.actionBtn, { marginRight: 8 }]}>
+          <TouchableOpacity onPress={copyToClipboard} style={[styles.actionBtn, { marginLeft: 5 }]}>
             {copied ? <Check color="#557A69" size={20} /> : <Copy color="#5A5A56" size={20} />}
           </TouchableOpacity>
         </View>

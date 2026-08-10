@@ -18,10 +18,12 @@ const Header = () => {
   return (
     <View style={styles.header}>
       <View style={styles.headerLeft}>
-        {(view === 'editor' || view === 'result') ? (
-          <TouchableOpacity onPress={() => setSidebarOpen(true)} style={styles.iconBtn}>
-            <Menu color="#5A5A56" size={24} />
+        {view === 'result' ? (
+          <TouchableOpacity onPress={handleNewSession} style={styles.iconBtn}>
+            <Plus color="#5A5A56" size={24} />
           </TouchableOpacity>
+        ) : view === 'editor' ? (
+          <View style={{ width: 40 }} />
         ) : (
           <TouchableOpacity onPress={goBack} style={styles.iconBtn}>
             <ChevronRight color="#5A5A56" size={24} />
@@ -35,9 +37,9 @@ const Header = () => {
       </View>
 
       <View style={styles.headerRight}>
-        {view === 'result' ? (
-          <TouchableOpacity onPress={handleNewSession} style={styles.iconBtn}>
-            <Plus color="#5A5A56" size={24} />
+        {view === 'result' || view === 'editor' ? (
+          <TouchableOpacity onPress={() => setSidebarOpen(true)} style={styles.iconBtn}>
+            <Menu color="#5A5A56" size={24} />
           </TouchableOpacity>
         ) : (
           <View style={{ width: 40 }} />
