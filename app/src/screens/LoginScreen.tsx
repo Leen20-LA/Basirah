@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Keyboard } from 'react-native';
 import { useApp } from '../context/AppContext';
 import { styles } from '../constants/theme';
 
@@ -23,6 +23,8 @@ const LoginScreen = () => {
             placeholder="أدخل بريدك الإلكتروني"
             placeholderTextColor="#A29C91"
             keyboardType="email-address"
+            returnKeyType="done"
+            onSubmitEditing={Keyboard.dismiss}
             textAlign="right"
           />
           <TouchableOpacity style={styles.primaryBtnFull} onPress={() => setView('editor')}>

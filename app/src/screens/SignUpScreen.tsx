@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Keyboard } from 'react-native';
 import { ChevronRight } from 'lucide-react-native';
 import { useApp } from '../context/AppContext';
 import { styles } from '../constants/theme';
@@ -51,6 +51,8 @@ const SignUpScreen = () => {
             placeholder="كلمة المرور"
             placeholderTextColor="#A29C91"
             secureTextEntry
+            returnKeyType="done"
+            onSubmitEditing={Keyboard.dismiss}
             textAlign="right"
           />
           <TouchableOpacity style={styles.primaryBtnFull} onPress={() => setView('editor')}>
