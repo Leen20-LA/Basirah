@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Keyboard } from 'react-native';
 import { useApp } from '../context/AppContext';
 import { styles } from '../constants/theme';
 
 const LoginScreen = () => {
   const { loginEmail, setLoginEmail, setView } = useApp();
+  const [loginPassword, setLoginPassword] = useState('');
 
   return (
     <View style={styles.loginContainer}>
@@ -23,6 +24,16 @@ const LoginScreen = () => {
             placeholder="أدخل بريدك الإلكتروني"
             placeholderTextColor="#A29C91"
             keyboardType="email-address"
+            returnKeyType="next"
+            textAlign="right"
+          />
+          <TextInput
+            style={styles.input}
+            value={loginPassword}
+            onChangeText={setLoginPassword}
+            placeholder="كلمة المرور"
+            placeholderTextColor="#A29C91"
+            secureTextEntry
             returnKeyType="done"
             onSubmitEditing={Keyboard.dismiss}
             textAlign="right"
