@@ -1,6 +1,9 @@
 export interface AnalysisResult {
   empathyMessage: string;
-  coreIdeas: string[];
+  understanding: string;
+  keyAreas: string[];
+  connections: string[];
+  priorities: string[];
   actionSteps: string[];
   reflectiveQuestion: string;
 }

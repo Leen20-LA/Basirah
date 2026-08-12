@@ -104,10 +104,18 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       inputText: 'أشعر بضغط كبير بسبب تراكم المهام في العمل ولا أعرف من أين أبدأ. لدي عرض تقديمي يوم الخميس ولم أبدأ بعد، وهناك إيميلات كثيرة معلقة. أشعر أنني تائه بين التخطيط والتنفيذ.',
       result: {
         empathyMessage: 'طبيعي جداً أن تشعر بالحيرة عندما تتزاحم المهام أمامك في وقت واحد. البداية دائماً هي الجزء الأثقل، لكنك الآن خطوت الخطوة الأولى بكتابتها.',
-        coreIdeas: [
-          'القلق الأساسي ينبع من العرض التقديمي القادم يوم الخميس.',
-          'الرسائل المعلقة تسبب تشتتاً ذهنياً مستمراً.',
-          'الشعور بالضياع ناتج عن محاولة التفكير في كل شيء معاً.'
+        understanding: 'هناك ضغط متراكم ناتج عن اجتماع مهام متعددة في وقت واحد: عرض تقديمي بموعد قريب، ورسائل معلقة، وشعور عام بالضياع بين التخطيط والتنفيذ.',
+        keyAreas: [
+          'العرض التقديمي القادم يوم الخميس ولم يبدأ بعد.',
+          'الرسائل المعلقة التي تسبب تشتتاً ذهنياً مستمراً.',
+          'الشعور بالضياع بين التخطيط والتنفيذ.'
+        ],
+        connections: [
+          'القلق من العرض التقديمي يستهلك مساحة ذهنية كبيرة، مما يجعل التعامل مع الرسائل المعلقة أصعب.',
+          'محاولة التفكير في كل شيء معاً تمنع البدء الفعلي بأي شيء.'
+        ],
+        priorities: [
+          'العرض التقديمي هو الأقرب موعداً والأعلى تأثيراً، لذا يستحق التركيز الأول.'
         ],
         actionSteps: [
           'حدد 15 دقيقة فقط الآن لوضع الهيكل العام للعرض التقديمي دون الاهتمام بالتفاصيل.',
@@ -212,7 +220,22 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   const copyToClipboard = async () => {
     if (!analysisResult) return;
-    const formatted = `رؤية بصيرة:\n${analysisResult.empathyMessage}\n\nالنقاط جوهرية:\n${(analysisResult.coreIdeas ?? []).map((item: string, i: number) => `${i + 1}. ${item}`).join('\n')}\n\nخطوات عمل مقترحة:\n${(analysisResult.actionSteps ?? []).map((item: string, i: number) => `- ${item}`).join('\n')}\n\nتأمل هادئ:\n${analysisResult.reflectiveQuestion}`.trim();
+    const parts: string[] = [
+      `رؤية بصيرة:\n${analysisResult.empathyMessage}`,
+      `ما الذي يحدث؟:\n${analysisResult.understanding}`,
+      `الصورة الكاملة:\n${(analysisResult.keyAreas ?? []).map((item: string, i: number) => `${i + 1}. ${item}`).join('\n')}`
+    ];
+    if (analysisResult.connections && analysisResult.connections.length > 0) {
+      parts.push(`ما الذي يربط هذه الأمور؟:\n${analysisResult.connections.map((item: string, i: number) => `${i + 1}. ${item}`).join('\n')}`);
+    }
+    if (analysisResult.priorities && analysisResult.priorities.length > 0) {
+      parts.push(`ما الذي يفضل أن تفعله الآن؟:\n${analysisResult.priorities.map((item: string, i: number) => `${i + 1}. ${item}`).join('\n')}`);
+    }
+    parts.push(`خطوات عمل مقترحة:\n${(analysisResult.actionSteps ?? []).map((item: string, i: number) => `- ${item}`).join('\n')}`);
+    if (analysisResult.reflectiveQuestion) {
+      parts.push(`تأمل هادئ:\n${analysisResult.reflectiveQuestion}`);
+    }
+    const formatted = parts.join('\n\n').trim();
     await Clipboard.setStringAsync(formatted);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);

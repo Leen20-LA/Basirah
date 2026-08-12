@@ -18,8 +18,13 @@ const isAnalysisResult = (value: unknown): value is AnalysisResult => {
   const v = value as Record<string, unknown>;
   return (
     typeof v.empathyMessage === 'string' &&
-    Array.isArray(v.coreIdeas) &&
-    v.coreIdeas.every((item) => typeof item === 'string') &&
+    typeof v.understanding === 'string' &&
+    Array.isArray(v.keyAreas) &&
+    v.keyAreas.every((item) => typeof item === 'string') &&
+    Array.isArray(v.connections) &&
+    v.connections.every((item) => typeof item === 'string') &&
+    Array.isArray(v.priorities) &&
+    v.priorities.every((item) => typeof item === 'string') &&
     Array.isArray(v.actionSteps) &&
     v.actionSteps.every((item) => typeof item === 'string') &&
     typeof v.reflectiveQuestion === 'string'

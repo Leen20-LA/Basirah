@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { HeartHandshake, Lightbulb, CheckCircle2, Check, HelpCircle, Bookmark, Copy, Plus } from 'lucide-react-native';
+import { HeartHandshake, Lightbulb, CheckCircle2, Check, HelpCircle, Bookmark, Copy, Plus, Compass, Link2, Target } from 'lucide-react-native';
 import { useApp } from '../context/AppContext';
 import { styles } from '../constants/theme';
 
@@ -41,12 +41,22 @@ const ResultScreen = () => {
 
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>اللب والجوهر</Text>
+          <Text style={styles.sectionTitle}>ما الذي يحدث؟</Text>
+          <Compass color="#6B82A8" size={18} style={{ marginLeft: 8 }} />
+        </View>
+        <View style={styles.empathyBox}>
+          <Text style={styles.empathyText}>{analysisResult.understanding}</Text>
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>الصورة الكاملة</Text>
           <Lightbulb color="#D29B52" size={18} style={{ marginLeft: 8 }} />
         </View>
-        {analysisResult.coreIdeas?.map((idea: string, idx: number) => (
+        {analysisResult.keyAreas?.map((area: string, idx: number) => (
           <View key={idx} style={styles.ideaCard}>
-            <Text style={styles.ideaText}>{idea}</Text>
+            <Text style={styles.ideaText}>{area}</Text>
             <View style={styles.ideaNumberBox}>
               <Text style={styles.ideaNumber}>{idx + 1}</Text>
             </View>
@@ -54,11 +64,45 @@ const ResultScreen = () => {
         ))}
       </View>
 
+      {analysisResult.connections?.length > 0 && (
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>ما الذي يربط هذه الأمور؟</Text>
+            <Link2 color="#8C7A6B" size={18} style={{ marginLeft: 8 }} />
+          </View>
+          {analysisResult.connections.map((connection: string, idx: number) => (
+            <View key={idx} style={styles.ideaCard}>
+              <Text style={styles.ideaText}>{connection}</Text>
+              <View style={styles.ideaNumberBox}>
+                <Text style={styles.ideaNumber}>{idx + 1}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {analysisResult.priorities?.length > 0 && (
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>ما الذي يفضل أن تفعله الآن؟</Text>
+            <Target color="#557A69" size={18} style={{ marginLeft: 8 }} />
+          </View>
+          {analysisResult.priorities.map((priority: string, idx: number) => (
+            <View key={idx} style={styles.ideaCard}>
+              <Text style={styles.ideaText}>{priority}</Text>
+              <View style={styles.ideaNumberBox}>
+                <Text style={styles.ideaNumber}>{idx + 1}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+      )}
+
       <View style={styles.section}>
         <View style={[styles.sectionHeader, { justifyContent: 'space-between' }]}>
           <Text style={styles.hintText}>اضغط للتعليم عند الإنجاز</Text>
           <View style={styles.rowCentered}>
-            <Text style={styles.sectionTitle}>خطوات هادئة للآن</Text>
+            <Text style={styles.sectionTitle}>خطوات مناسبة لك</Text>
             <CheckCircle2 color="#557A69" size={18} style={{ marginLeft: 8 }} />
           </View>
         </View>
