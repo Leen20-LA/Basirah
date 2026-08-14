@@ -102,7 +102,7 @@ const ResultScreen = () => {
         <View style={[styles.sectionHeader, { justifyContent: 'space-between' }]}>
           <Text style={styles.hintText}>اضغط للتعليم عند الإنجاز</Text>
           <View style={styles.rowCentered}>
-            <Text style={styles.sectionTitle}>خطوات مناسبة لك</Text>
+            <Text style={styles.sectionTitle}>خطوات مخصصة لك</Text>
             <CheckCircle2 color="#557A69" size={18} style={{ marginLeft: 8 }} />
           </View>
         </View>
